@@ -8,9 +8,9 @@ import (
 
 type UseCase interface {
 	CreateUser(ctx context.Context, user models.CreateUser) (uuid.UUID, error)
-	EditUser(ctx context.Context, user models.User) error
+	EditUser(ctx context.Context, user models.EditUser) error
 	GetUser(ctx context.Context, uuid uuid.UUID) (models.User, error)
-	CreateTomato(ctx context.Context, tomato models.Tomato) error
+	CreateTomato(ctx context.Context, tomato models.CreateTomatoIn) (uuid.UUID, error)
 	CompleteTomato(ctx context.Context, uuid uuid.UUID) error
 	GetTomato(ctx context.Context, uuid uuid.UUID) (models.Tomato, error)
 	GetTomatoNltx(ctx context.Context, uuid2 uuid.UUID) (models.TomatoNltx, error)
