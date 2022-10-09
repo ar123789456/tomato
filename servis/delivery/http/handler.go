@@ -221,6 +221,32 @@ func (h *Handler) GetTomato(w http.ResponseWriter, r *http.Request) {
 	w.Write(out)
 }
 
+func (h *Handler) DeleteTomato(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body) // response body is []byte
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var result models.TomatoIn
+	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to the go struct pointer
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = h.useCase.DeleteTomato(context.TODO(), result.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
 func (h *Handler) GetTomatoNltx(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)

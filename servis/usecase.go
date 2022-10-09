@@ -13,5 +13,6 @@ type UseCase interface {
 	CreateTomato(ctx context.Context, tomato models.CreateTomatoIn) (uuid.UUID, error)
 	CompleteTomato(ctx context.Context, uuid uuid.UUID) error
 	GetTomato(ctx context.Context, uuid uuid.UUID) (models.Tomato, error)
-	GetTomatoNltx(ctx context.Context, uuid2 uuid.UUID) (models.TomatoNltx, error)
+	DeleteTomato(ctx context.Context, uuid uuid.UUID) error
+	GetTomatoNltx(ctx context.Context, uuid uuid.UUID) (models.TomatoNltx, error)
 }
