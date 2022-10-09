@@ -3,7 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"tomato/server"
+	"tomato/servis"
+	"tomato/servis/repository/mock"
 	"tomato/servis/repository/sqlite"
 
 	handler "tomato/servis/delivery/http"
@@ -15,16 +18,26 @@ func main() {
 }
 
 func Run() {
+	args := os.Args
+	test := false
+	if len(args) != 1 {
+		test = args[1] == "test"
+	}
+	var repo servis.Repository
 	//init db
-	db := server.InitDB()
-	defer func() {
-		err := db.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}()
-	//init service
-	repo := sqlite.NewRepository(db)
+	if !test {
+		db := server.InitDB()
+		defer func() {
+			err := db.Close()
+			if err != nil {
+				log.Println(err)
+			}
+		}()
+		//init service
+		repo = sqlite.NewRepository(db)
+	} else {
+		repo = mock.NewRepository()
+	}
 	useCase := usecase.NewUseCase(repo)
 	handlers := handler.NewHandler(useCase)
 
@@ -35,7 +48,7 @@ func Run() {
 	mux.HandleFunc("/user/edit", handlers.EditUser)
 	mux.HandleFunc("/user/", handlers.GetUser)
 	mux.HandleFunc("/tomato/create", handlers.CreateTomato)
-	mux.HandleFunc("/tomato/complete", handlers.CompleteTomato)
+	mux.HandleFunc("/tomato/complete", handlers.StartTomato)
 	mux.HandleFunc("/tomato", handlers.GetTomato)
 	mux.HandleFunc("/tomato/delete", handlers.DeleteTomato)
 	mux.HandleFunc("/analytics", handlers.GetTomatoNltx)

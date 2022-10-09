@@ -163,7 +163,7 @@ func (h *Handler) CreateTomato(w http.ResponseWriter, r *http.Request) {
 	w.Write(out)
 }
 
-func (h *Handler) CompleteTomato(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) StartTomato(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
@@ -182,7 +182,7 @@ func (h *Handler) CompleteTomato(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.useCase.CompleteTomato(context.TODO(), result.Id)
+	err = h.useCase.StartTomato(context.TODO(), result.Id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

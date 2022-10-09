@@ -30,7 +30,7 @@ func (r *Repository) GetUser(ctx context.Context, uuid uuid.UUID) (models.User, 
 func (r *Repository) CreateTomato(ctx context.Context, tomato models.Tomato) (uuid.UUID, error) {
 	return uuid.Nil, nil
 }
-func (r *Repository) CompleteTomato(ctx context.Context, uuid uuid.UUID) error {
+func (r *Repository) StartTomato(ctx context.Context, uuid uuid.UUID, start int64) error {
 	return nil
 }
 func (r *Repository) GetTomato(ctx context.Context, uuid uuid.UUID) (models.Tomato, error) {

@@ -11,7 +11,7 @@ type Repository interface {
 	EditUser(ctx context.Context, user models.User) error
 	GetUser(ctx context.Context, uuid uuid.UUID) (models.User, error)
 	CreateTomato(ctx context.Context, tomato models.Tomato) (uuid.UUID, error)
-	CompleteTomato(ctx context.Context, uuid uuid.UUID) error
+	StartTomato(ctx context.Context, uuid uuid.UUID, start int64) error
 	GetTomato(ctx context.Context, uuid uuid.UUID) (models.Tomato, error)
 	DeleteTomato(ctx context.Context, uuid uuid.UUID) error
 	GetTomatoNltx(ctx context.Context, uuid2 uuid.UUID) (models.TomatoNltx, error)

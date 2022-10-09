@@ -81,8 +81,9 @@ func (uc *UseCase) CreateTomato(ctx context.Context, tomato models.CreateTomatoI
 	}
 	return uc.repository.CreateTomato(ctx, tmt)
 }
-func (uc *UseCase) CompleteTomato(ctx context.Context, uuid uuid.UUID) error {
-	return uc.repository.CompleteTomato(ctx, uuid)
+func (uc *UseCase) StartTomato(ctx context.Context, uuid uuid.UUID) error {
+
+	return uc.repository.StartTomato(ctx, uuid, time.Now().Unix())
 }
 func (uc *UseCase) GetTomato(ctx context.Context, uuid uuid.UUID) (models.Tomato, error) {
 	return uc.repository.GetTomato(ctx, uuid)
