@@ -7,7 +7,7 @@ import (
 )
 
 type UseCase interface {
-	CreateUser(ctx context.Context, user models.User) (uuid.UUID, error)
+	CreateUser(ctx context.Context, user models.CreateUser) (uuid.UUID, error)
 	EditUser(ctx context.Context, user models.User) error
 	GetUser(ctx context.Context, uuid uuid.UUID) (models.User, error)
 	CreateTomato(ctx context.Context, tomato models.Tomato) error

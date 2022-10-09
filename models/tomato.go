@@ -10,11 +10,8 @@ type Tomato struct {
 	CreateTime     int64       `json:"createTime"`
 	CategoryTomato TimerTomato `json:"categoryTomato"`
 	Title          string      `json:"title"`
-	Context        string      `json:"context"`
+	Context        *string     `json:"context"`
 	Tags           []string    `json:"tags"`
-}
-
-type TomatoNltx struct {
 }
 
 type TimerTomato struct {
@@ -27,4 +24,29 @@ func (tt *TimerTomato) SetRest() {
 		rest := tt.WorkTime / 6
 		tt.Rest = &rest
 	}
+}
+
+//-------------------------------------
+// Analytics
+//-------------------------------------
+
+type TomatoNltx struct {
+}
+
+//-------------------------------------
+// Input
+//-------------------------------------
+
+//CreateTomatoIn input for create
+type CreateTomatoIn struct {
+	TimerStart     int64       `json:"timerStart"`
+	CategoryTomato TimerTomato `json:"categoryTomato"`
+	Title          string      `json:"title"`
+	Context        *string     `json:"context"`
+	Tags           []string    `json:"tags"`
+}
+
+//TomatoIn input value Start and delete
+type TomatoIn struct {
+	Id uuid.UUID `json:"id"`
 }
