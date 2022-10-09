@@ -4,8 +4,10 @@ import (
 	"log"
 	"net/http"
 	"tomato/server"
+	"tomato/servis/repository/sqlite"
 
 	handler "tomato/servis/delivery/http"
+	"tomato/servis/usecase"
 )
 
 func main() {
@@ -21,8 +23,10 @@ func Run() {
 			log.Println(err)
 		}
 	}()
-	//init handler
-	handlers := handler.NewHandler(nil)
+	//init service
+	repo := sqlite.NewRepository(db)
+	useCase := usecase.NewUseCase(repo)
+	handlers := handler.NewHandler(useCase)
 
 	mux := http.NewServeMux()
 
