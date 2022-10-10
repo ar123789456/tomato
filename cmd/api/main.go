@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -21,7 +22,7 @@ func Run() {
 	args := os.Args
 	test := false
 	if len(args) != 1 {
-		test = args[1] == "test"
+		test = args[1] == "dev"
 	}
 	var repo servis.Repository
 	//init db
@@ -36,6 +37,7 @@ func Run() {
 		//init service
 		repo = sqlite.NewRepository(db)
 	} else {
+		fmt.Println("dev")
 		repo = mock.NewRepository()
 	}
 	useCase := usecase.NewUseCase(repo)
