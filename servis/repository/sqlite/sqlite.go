@@ -18,7 +18,8 @@ func NewRepository(db *sql.DB) *Repository {
 }
 
 func (r *Repository) CreateUser(ctx context.Context, user models.User) (uuid.UUID, error) {
-
+	query := "INSERT into users (id, email, nick, name, secondName, class, session)"
+	r.db.QueryContext(ctx, query, user.Id, user.Email, user.Nick, user.Name, user.SecondName, user.Class)
 	return uuid.Nil, nil
 }
 func (r *Repository) EditUser(ctx context.Context, user models.User) error {

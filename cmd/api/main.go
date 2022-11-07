@@ -1,13 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"tomato/server"
 	"tomato/servis"
-	"tomato/servis/repository/mock"
 	"tomato/servis/repository/sqlite"
 
 	handler "tomato/servis/delivery/http"
@@ -19,27 +16,19 @@ func main() {
 }
 
 func Run() {
-	args := os.Args
-	test := false
-	if len(args) != 1 {
-		test = args[1] == "dev"
-	}
 	var repo servis.Repository
 	//init db
-	if !test {
-		db := server.InitDB()
-		defer func() {
-			err := db.Close()
-			if err != nil {
-				log.Println(err)
-			}
-		}()
-		//init service
-		repo = sqlite.NewRepository(db)
-	} else {
-		fmt.Println("dev")
-		repo = mock.NewRepository()
-	}
+	db := server.InitDB()
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+	return
+	//init service
+	repo = sqlite.NewRepository(db)
+
 	useCase := usecase.NewUseCase(repo)
 	handlers := handler.NewHandler(useCase)
 

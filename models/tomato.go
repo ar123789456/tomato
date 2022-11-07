@@ -14,6 +14,7 @@ type Tomato struct {
 	Title       string      `json:"title"`
 	Context     *string     `json:"context"`
 	Tags        []string    `json:"tags"`
+	UserID      uuid.UUID   `json:"-"`
 }
 
 var (
@@ -31,6 +32,7 @@ func (t *Tomato) Validate() error {
 }
 
 type TimerTomato struct {
+	id       int64  `json:"-"`
 	WorkTime int64  `json:"workTime"` //minute
 	Rest     *int64 `json:"rest"`     //minute
 }
