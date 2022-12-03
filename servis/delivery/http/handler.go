@@ -35,6 +35,7 @@ type UserSignUp struct {
 	SecondName *string `json:"secondName"`
 	Nick       string  `json:"nick"`
 	Email      *string `json:"email"`
+	Password   string  `json:"password"`
 }
 
 // SignUp create new user handler
@@ -64,6 +65,7 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 	user.SecondName = result.SecondName
 	user.Nick = result.Nick
 	user.Email = result.Email
+	user.Password = result.Password
 
 	//Create user
 	err = h.useCase.CreateUser(&user, r.Context())
@@ -325,14 +327,8 @@ func (h *Handler) GetHabits(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	//Get session
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 	//Get habits
-	habits, err := h.useCase.GetHabits(cookie.Value, time, r.Context())
+	habits, err := h.useCase.GetHabits(time, r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

@@ -3,8 +3,7 @@ package usecase
 import (
 	"context"
 	"github.com/google/uuid"
-	"strings"
-	"time"
+	"golang.org/x/crypto/bcrypt"
 	"tomato/models"
 	"tomato/servis"
 )
@@ -13,84 +12,93 @@ type UseCase struct {
 	repository servis.Repository
 }
 
+// NewUseCase UseCase constructor
 func NewUseCase(repository servis.Repository) *UseCase {
 	return &UseCase{
 		repository: repository,
 	}
 }
 
-func (uc *UseCase) CreateUser(ctx context.Context, userIn models.CreateUser) (uuid.UUID, error) {
-	var user models.User
-	if userIn.SecondName != nil && strings.TrimSpace(*userIn.SecondName) == "" {
-		userIn.SecondName = nil
-	}
-	if userIn.Email != nil && strings.TrimSpace(*userIn.Email) == "" {
-		userIn.Email = nil
-	}
-	id := uuid.New()
-	user.Id = id
-	user.Name = userIn.Name
-	user.SecondName = userIn.SecondName
-	user.Nick = userIn.Nick
-	user.Class = userIn.Class
-	user.Email = userIn.Email
-	user.Photo = userIn.Photo
-
-	return uc.repository.CreateUser(ctx, user)
+// User
+func (uc *UseCase) CreateUser(user *models.User, ctx context.Context) error {
+	user.Id = uuid.New()
+	hashPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashPass)
+	_, err = uc.repository.CreateUser(ctx, *user)
+	return err
 }
 
-func (uc *UseCase) EditUser(ctx context.Context, userIn models.EditUser) error {
-	var user models.User
-	if userIn.SecondName != nil && strings.TrimSpace(*userIn.SecondName) == "" {
-		userIn.SecondName = nil
-	}
-	if userIn.Email != nil && strings.TrimSpace(*userIn.Email) == "" {
-		userIn.Email = nil
-	}
-	user.Id = userIn.Id
-	user.Name = userIn.Name
-	user.SecondName = userIn.SecondName
-	user.Nick = userIn.Nick
-	user.Class = userIn.Class
-	user.Email = userIn.Email
-	user.Photo = userIn.Photo
-	err := user.Validate()
+func (uc *UseCase) SignIn(user *models.User, ctx context.Context) (string, error) {
+	user, err := uc.repository.GetUserByNickOrEmail(ctx, &user.Nick, user.Email)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return uc.repository.EditUser(ctx, user)
-}
-
-func (uc *UseCase) GetUser(ctx context.Context, uuid uuid.UUID) (models.User, error) {
-	return uc.repository.GetUser(ctx, uuid)
-}
-
-func (uc *UseCase) CreateTomato(ctx context.Context, tomato models.CreateTomatoIn) (uuid.UUID, error) {
-	var tmt models.Tomato
-	tmt.Id = uuid.New()
-	tmt.Title = tomato.Title
-	tomato.TimerTomato.SetRest()
-	tmt.TimerTomato = tomato.TimerTomato
-	tmt.CreateTime = time.Now().Unix()
-	tmt.Tags = tomato.Tags
-	tmt.Context = tomato.Context
-
-	err := tmt.Validate()
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(user.Password))
 	if err != nil {
-		return uuid.Nil, err
+		return "", err
 	}
-	return uc.repository.CreateTomato(ctx, tmt)
+	session := uuid.New()
+	_, err = uc.repository.CreateUserSession(ctx, user.Id, session)
+	return session.String(), err
 }
-func (uc *UseCase) StartTomato(ctx context.Context, uuid uuid.UUID) error {
 
-	return uc.repository.StartTomato(ctx, uuid, time.Now().Unix())
+func (uc *UseCase) SignOut(ctx context.Context) error {
+	session, ok := ctx.Value("session").(uuid.UUID)
+	if !ok {
+		return servis.ErrSessionNotFound
+	}
+	return uc.repository.DeleteUserSession(ctx, session)
 }
-func (uc *UseCase) GetTomato(ctx context.Context, uuid uuid.UUID) (models.Tomato, error) {
-	return uc.repository.GetTomato(ctx, uuid)
+
+func (uc *UseCase) GetUser(ctx context.Context) (*models.User, error) {
+	session, ok := ctx.Value("session").(uuid.UUID)
+	if !ok {
+		return nil, servis.ErrSessionNotFound
+	}
+	return uc.repository.GetUserBySession(ctx, session)
 }
-func (uc *UseCase) DeleteTomato(ctx context.Context, uuid uuid.UUID) error {
-	return uc.repository.DeleteTomato(ctx, uuid)
+
+// Habit
+func (uc *UseCase) CreateHabit(habit *models.Habit, ctx context.Context) error {
+	habit.Id = uuid.New()
+	_, err := uc.repository.CreateHabit(ctx, *habit)
+	return err
 }
-func (uc *UseCase) GetTomatoNltx(ctx context.Context, uuid uuid.UUID) (models.TomatoNltx, error) {
-	return uc.repository.GetTomatoNltx(ctx, uuid)
+
+func (uc *UseCase) GetHabits(time int64, ctx context.Context) ([]*models.Habit, error) {
+	user, err := uc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return uc.repository.GetHabits(ctx, user.Id, time)
+}
+
+func (uc *UseCase) CompletedHabit(habitId string, ctx context.Context) error {
+	panic("implement me")
+}
+
+// Task
+func (uc *UseCase) CreateTask(task *models.Task, ctx context.Context) error {
+	panic("implement me")
+}
+
+func (uc *UseCase) GetTasks(session string, time int64, ctx context.Context) ([]*models.Task, error) {
+	panic("implement me")
+}
+
+func (uc *UseCase) CompletedTask(taskId string, ctx context.Context) error {
+	panic("implement me")
+}
+
+// Tomato
+func (uc *UseCase) CreateTomato(tomato *models.Tomato, ctx context.Context) error {
+	panic("implement me")
+}
+
+func (uc *UseCase) GetTomatoes(time int64, ctx context.Context) ([]*models.Tomato, error) {
+	panic("implement me")
+}
+
+func (uc *UseCase) StartTomato(tomatoId string, ctx context.Context) error {
+	panic("implement me")
 }

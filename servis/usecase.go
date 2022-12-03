@@ -2,7 +2,12 @@ package servis
 
 import (
 	"context"
+	"errors"
 	"tomato/models"
+)
+
+var (
+	ErrSessionNotFound = errors.New("session not found")
 )
 
 type UseCase interface {
@@ -10,11 +15,11 @@ type UseCase interface {
 	CreateUser(user *models.User, ctx context.Context) error
 	SignIn(user *models.User, ctx context.Context) (string, error)
 	SignOut(ctx context.Context) error
-	GetUser(id string, ctx context.Context) (*models.User, error)
+	GetUser(ctx context.Context) (*models.User, error)
 
 	// Habit
 	CreateHabit(habit *models.Habit, ctx context.Context) error
-	GetHabits(userId string, time int64, ctx context.Context) ([]*models.Habit, error)
+	GetHabits(time int64, ctx context.Context) ([]*models.Habit, error)
 	CompletedHabit(habitId string, ctx context.Context) error
 
 	// Task

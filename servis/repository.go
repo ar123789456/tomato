@@ -8,11 +8,11 @@ import (
 
 type Repository interface {
 	CreateUser(ctx context.Context, user models.User) (uuid.UUID, error)
-	EditUser(ctx context.Context, user models.User) error
-	GetUser(ctx context.Context, uuid uuid.UUID) (models.User, error)
-	CreateTomato(ctx context.Context, tomato models.Tomato) (uuid.UUID, error)
-	StartTomato(ctx context.Context, uuid uuid.UUID, start int64) error
-	GetTomato(ctx context.Context, uuid uuid.UUID) (models.Tomato, error)
-	DeleteTomato(ctx context.Context, uuid uuid.UUID) error
-	GetTomatoNltx(ctx context.Context, uuid2 uuid.UUID) (models.TomatoNltx, error)
+	GetUserByNickOrEmail(ctx context.Context, nick *string, email *string) (*models.User, error)
+	CreateUserSession(ctx context.Context, userId uuid.UUID, session uuid.UUID) (uuid.UUID, error)
+	DeleteUserSession(ctx context.Context, session uuid.UUID) error
+	GetUserBySession(ctx context.Context, session uuid.UUID) (*models.User, error)
+	// Habit
+	CreateHabit(ctx context.Context, habit models.Habit) (uuid.UUID, error)
+	GetHabits(ctx context.Context, userId uuid.UUID, time int64) ([]*models.Habit, error)
 }
