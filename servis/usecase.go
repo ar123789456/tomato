@@ -2,17 +2,28 @@ package servis
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"tomato/models"
 )
 
 type UseCase interface {
-	CreateUser(ctx context.Context, user models.CreateUser) (uuid.UUID, error)
-	EditUser(ctx context.Context, user models.EditUser) error
-	GetUser(ctx context.Context, uuid uuid.UUID) (models.User, error)
-	CreateTomato(ctx context.Context, tomato models.CreateTomatoIn) (uuid.UUID, error)
-	StartTomato(ctx context.Context, uuid uuid.UUID) error
-	GetTomato(ctx context.Context, uuid uuid.UUID) (models.Tomato, error)
-	DeleteTomato(ctx context.Context, uuid uuid.UUID) error
-	GetTomatoNltx(ctx context.Context, uuid uuid.UUID) (models.TomatoNltx, error)
+	// User
+	CreateUser(user *models.User, ctx context.Context) error
+	SignIn(user *models.User, ctx context.Context) (string, error)
+	SignOut(ctx context.Context) error
+	GetUser(id string, ctx context.Context) (*models.User, error)
+
+	// Habit
+	CreateHabit(habit *models.Habit, ctx context.Context) error
+	GetHabits(userId string, time int64, ctx context.Context) ([]*models.Habit, error)
+	CompletedHabit(habitId string, ctx context.Context) error
+
+	// Task
+	CreateTask(task *models.Task, ctx context.Context) error
+	GetTasks(session string, time int64, ctx context.Context) ([]*models.Task, error)
+	CompletedTask(session string, taskId string, ctx context.Context) error
+
+	// Tomato
+	CreateTomato(tomato *models.Tomato, ctx context.Context) error
+	GetTomatoes(time int64, ctx context.Context) ([]*models.Tomato, error)
+	StartTomato(tomatoId string, ctx context.Context) error
 }
