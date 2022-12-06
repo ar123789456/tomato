@@ -24,8 +24,8 @@ type UseCase interface {
 
 	// Task
 	CreateTask(task *models.Task, ctx context.Context) error
-	GetTasks(session string, time int64, ctx context.Context) ([]*models.Task, error)
-	CompletedTask(session string, taskId string, ctx context.Context) error
+	GetTasks(time int64, ctx context.Context) ([]*models.Task, error)
+	CompletedTask(taskId string, ctx context.Context) error
 
 	// Tomato
 	CreateTomato(tomato *models.Tomato, ctx context.Context) error

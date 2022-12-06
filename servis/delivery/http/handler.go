@@ -216,14 +216,8 @@ func (h *Handler) GetTasks(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	//Get session
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 	//Get tasks
-	tasks, err := h.useCase.GetTasks(cookie.Value, time, r.Context())
+	tasks, err := h.useCase.GetTasks(time, r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -251,14 +245,8 @@ func (h *Handler) CompleteTask(w http.ResponseWriter, r *http.Request) {
 	}
 	//get task id on request params
 	id := r.URL.Query().Get("id")
-	//Get session
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 	//Complete task
-	err = h.useCase.CompletedTask(cookie.Value, id, r.Context())
+	err := h.useCase.CompletedTask(id, r.Context())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

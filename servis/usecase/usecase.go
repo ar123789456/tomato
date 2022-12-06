@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 	"tomato/models"
 	"tomato/servis"
 )
@@ -74,31 +75,51 @@ func (uc *UseCase) GetHabits(time int64, ctx context.Context) ([]*models.Habit, 
 }
 
 func (uc *UseCase) CompletedHabit(habitId string, ctx context.Context) error {
-	panic("implement me")
+	return uc.repository.CompletedHabit(ctx, uuid.MustParse(habitId))
 }
 
 // Task
 func (uc *UseCase) CreateTask(task *models.Task, ctx context.Context) error {
-	panic("implement me")
+	task.CreatedAt = time.Now().Unix()
+	task.Id = uuid.New()
+	user, err := uc.GetUser(ctx)
+	if err != nil {
+		return err
+	}
+	task.UserId = user.Id
+	_, err = uc.repository.CreateTask(ctx, *task)
+	return err
 }
 
-func (uc *UseCase) GetTasks(session string, time int64, ctx context.Context) ([]*models.Task, error) {
-	panic("implement me")
+func (uc *UseCase) GetTasks(time int64, ctx context.Context) ([]*models.Task, error) {
+	return uc.repository.GetTasks(ctx, time)
 }
 
 func (uc *UseCase) CompletedTask(taskId string, ctx context.Context) error {
-	panic("implement me")
+	return uc.repository.CompletedTask(ctx, uuid.MustParse(taskId))
 }
 
 // Tomato
 func (uc *UseCase) CreateTomato(tomato *models.Tomato, ctx context.Context) error {
-	panic("implement me")
+	user, err := uc.GetUser(ctx)
+	if err != nil {
+		return err
+	}
+	tomato.Id = uuid.New()
+	tomato.UserId = user.Id
+	tomato.CreateTime = time.Now().Unix()
+	_, err = uc.repository.CreateTomato(ctx, *tomato)
+	return err
 }
 
 func (uc *UseCase) GetTomatoes(time int64, ctx context.Context) ([]*models.Tomato, error) {
-	panic("implement me")
+	user, err := uc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return uc.repository.GetTomatoes(ctx, user.Id, time)
 }
 
 func (uc *UseCase) StartTomato(tomatoId string, ctx context.Context) error {
-	panic("implement me")
+	return uc.repository.StartTomato(ctx, uuid.MustParse(tomatoId))
 }
